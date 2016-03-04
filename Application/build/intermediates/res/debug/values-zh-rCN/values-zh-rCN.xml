@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/E:/leung_apk_test/BluetoothLeGatt/Application/src/main/res/values-zh-rCN/strings.xml -->
+    <eat-comment/>
+    <string name="ble_not_supported">该设备不支持低功耗蓝牙</string>
+    <string name="btn1_text">发送</string>
+    <string name="character_not_ready">无法获取特征值</string>
+    <string name="connected">已连接</string>
+    <string name="connecting">正在获取服务</string>
+    <string name="disconnected">连接已断开</string>
+    <string name="editText_hint">在此输入文字</string>
+    <string name="error_bluetooth_not_supported">该设备不支持蓝牙功能</string>
+    <string name="label_data">数据:</string>
+    <string name="label_device_address">设备地址:</string>
+    <string name="label_state">连接状态:</string>
+    <string name="menu_connect">连接</string>
+    <string name="menu_disconnect">断开连接</string>
+    <string name="menu_scan">扫描</string>
+    <string name="menu_stop">停止</string>
+    <string name="no_data">没有数据</string>
+    <string name="nothing_input">欢迎使用!</string>
+    <string name="send_success">已成功发送</string>
+    <string name="title_devices">BLE设备扫描</string>
+    <string name="unknown_characteristic">未知特征值</string>
+    <string name="unknown_device">未知设备</string>
+    <string name="unknown_service">未知服务</string>
+</resources>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2013 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<resources>
+    <string name="ble_not_supported">该设备不支持低功耗蓝牙</string>
+    <string name="label_data">数据:</string>
+    <string name="label_device_address">设备地址:</string>
+    <string name="label_state">连接状态:</string>
+    <string name="no_data">没有数据</string>
+    <string name="connected">已连接</string>
+    <string name="disconnected">连接已断开</string>
+    <string name="title_devices">BLE设备扫描</string>
+    <string name="error_bluetooth_not_supported">该设备不支持蓝牙功能</string>
+
+    <string name="unknown_device">未知设备</string>
+    <string name="unknown_characteristic">未知特征值</string>
+    <string name="unknown_service">未知服务</string>
+    <string name="send_success">已成功发送</string>
+    <string name="character_not_ready">无法获取特征值</string>
+    <string name="nothing_input">欢迎使用!</string>
+    <string name="connecting">正在获取服务</string>
+    <!-- Menu items -->
+    <string name="menu_connect">连接</string>
+    <string name="menu_disconnect">断开连接</string>
+    <string name="menu_scan">扫描</string>
+    <string name="menu_stop">停止</string>
+    <string name="btn1_text">发送</string>
+    <string name="editText_hint">在此输入文字</string>
+</resources>
