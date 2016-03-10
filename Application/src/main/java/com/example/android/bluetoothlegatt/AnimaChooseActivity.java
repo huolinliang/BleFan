@@ -28,19 +28,24 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 /**
  * A sample showing how to zoom an image thumbnail to full-screen, by animating the bounds of the
  * zoomed image from the thumbnail bounds to the screen bounds.
- *
+ * <p/>
  * <p>In this sample, the user can touch one of two images. Touching an image zooms it in, covering
  * the entire activity content area. Touching the zoomed-in image hides it.</p>
  */
-public class AnimaChooseActivity extends FragmentActivity {
+public class AnimaChooseActivity extends FragmentActivity implements View.OnTouchListener, GestureDetector.OnGestureListener {
     /**
      * Hold a reference to the current animator, so that it can be canceled mid-way.
      */
@@ -51,6 +56,7 @@ public class AnimaChooseActivity extends FragmentActivity {
      * subtle animations or animations that occur very frequently.
      */
     private int mShortAnimationDuration;
+    private GestureDetector detector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,8 +111,77 @@ public class AnimaChooseActivity extends FragmentActivity {
             }
         });
 
+        detector = new GestureDetector(this);
+        //LinearLayout ll = (LinearLayout) findViewById(R.id.main_layout);
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.container);
+        frameLayout.setOnTouchListener(this);
+        frameLayout.setLongClickable(true);
         // Retrieve and cache the system's default "short" animation time.
         mShortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        // TODO Auto-generated method stub
+        return detector.onTouchEvent(event);
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean onDown(MotionEvent e) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+                            float distanceY) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+                           float velocityY) {
+        // TODO Auto-generated method stub
+        if (e1.getX() - e2.getX() > 120) {
+            /*Intent upIntent = new Intent(AnimaChooseActivity.this, AnimaChooseActivity.class);
+            upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(upIntent);*/
+            Toast.makeText(this, "向左手势", Toast.LENGTH_SHORT).show();
+
+        } else if (e2.getX() - e1.getX() > 120) {
+            //切换Activity
+            Intent upIntent = NavUtils.getParentActivityIntent(this);
+            if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                TaskStackBuilder.create(this)
+                        .addNextIntentWithParentStack(upIntent)
+                        .startActivities();
+            } else {
+                upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                NavUtils.navigateUpTo(this, upIntent);
+            }
+            Toast.makeText(this, "向右手势", Toast.LENGTH_SHORT).show();
+        }
+
+        return false;
     }
 
     @Override
@@ -132,13 +207,13 @@ public class AnimaChooseActivity extends FragmentActivity {
      * "Zooms" in a thumbnail view by assigning the high resolution image to a hidden "zoomed-in"
      * image view and animating its bounds to fit the entire activity content area. More
      * specifically:
-     *
+     * <p/>
      * <ol>
-     *   <li>Assign the high-res image to the hidden "zoomed-in" (expanded) image view.</li>
-     *   <li>Calculate the starting and ending bounds for the expanded view.</li>
-     *   <li>Animate each of four positioning/sizing properties (X, Y, SCALE_X, SCALE_Y)
-     *       simultaneously, from the starting bounds to the ending bounds.</li>
-     *   <li>Zoom back out by running the reverse animation on click.</li>
+     * <li>Assign the high-res image to the hidden "zoomed-in" (expanded) image view.</li>
+     * <li>Calculate the starting and ending bounds for the expanded view.</li>
+     * <li>Animate each of four positioning/sizing properties (X, Y, SCALE_X, SCALE_Y)
+     * simultaneously, from the starting bounds to the ending bounds.</li>
+     * <li>Zoom back out by running the reverse animation on click.</li>
      * </ol>
      *
      * @param thumbView  The thumbnail view to zoom in.
