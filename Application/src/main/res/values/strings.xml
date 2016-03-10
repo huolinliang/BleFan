@@ -39,5 +39,6 @@
     <string name="menu_stop">Stop</string>
     <string name="btn1_text">Send</string>
     <string name="editText_hint">Input Text Here</string>
+    <string name="choose_anima_type">Choose Animation Type</string>
 
 </resources>

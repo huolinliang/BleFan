@@ -38,4 +38,5 @@
     <string name="menu_stop">停止</string>
     <string name="btn1_text">发送</string>
     <string name="editText_hint">在此输入文字</string>
+    <string name="choose_anima_type">选择动画效果</string>
 </resources>
