@@ -55,6 +55,12 @@
         <activity android:name=".DeviceControlActivity"
             android:screenOrientation="portrait"/>
         <service android:name=".BluetoothLeService" android:enabled="true"/>
+        <activity android:name=".AnimaChooseActivity"
+            android:label="@string/choose_anima_type"
+            android:parentActivityName=".DeviceControlActivity">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DeviceControlActivity" />
+        </activity>
     </application>
 
 </manifest>
