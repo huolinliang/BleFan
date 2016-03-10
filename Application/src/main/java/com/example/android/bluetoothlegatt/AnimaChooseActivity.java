@@ -60,6 +60,7 @@ public class AnimaChooseActivity extends FragmentActivity implements View.OnTouc
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.animation_choose);
 
@@ -165,7 +166,7 @@ public class AnimaChooseActivity extends FragmentActivity implements View.OnTouc
             /*Intent upIntent = new Intent(AnimaChooseActivity.this, AnimaChooseActivity.class);
             upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(upIntent);*/
-            Toast.makeText(this, "向左手势", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "向左手势", Toast.LENGTH_SHORT).show();
 
         } else if (e2.getX() - e1.getX() > 120) {
             //切换Activity
@@ -174,16 +175,23 @@ public class AnimaChooseActivity extends FragmentActivity implements View.OnTouc
                 TaskStackBuilder.create(this)
                         .addNextIntentWithParentStack(upIntent)
                         .startActivities();
+                overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
             } else {
                 upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 NavUtils.navigateUpTo(this, upIntent);
+                overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
             }
-            Toast.makeText(this, "向右手势", Toast.LENGTH_SHORT).show();
+           //Toast.makeText(this, "向右手势", Toast.LENGTH_SHORT).show();
         }
 
         return false;
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -193,9 +201,11 @@ public class AnimaChooseActivity extends FragmentActivity implements View.OnTouc
                     TaskStackBuilder.create(this)
                             .addNextIntentWithParentStack(upIntent)
                             .startActivities();
+                    overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
                 } else {
                     upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     NavUtils.navigateUpTo(this, upIntent);
+                    overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
                 }
                 return true;
         }

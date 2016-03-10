@@ -329,12 +329,12 @@ public class DeviceControlActivity extends Activity implements View.OnTouchListe
             Intent upIntent = new Intent(DeviceControlActivity.this, AnimaChooseActivity.class);
             upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(upIntent);
-            Toast.makeText(this, "向左手势", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "向左手势", Toast.LENGTH_SHORT).show();
 
         }
         else if (e2.getX()-e1.getX() >120) {
             //切换Activity
-            Toast.makeText(this, "向右手势", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, "向右手势", Toast.LENGTH_SHORT).show();
         }
 
         return false;
