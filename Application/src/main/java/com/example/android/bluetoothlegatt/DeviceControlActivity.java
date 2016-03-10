@@ -17,6 +17,8 @@
 package com.example.android.bluetoothlegatt;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
@@ -27,11 +29,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.AssetManager;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,7 +55,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * For a given BLE device, this Activity provides the user interface to connect, display data,
@@ -90,6 +94,7 @@ public class DeviceControlActivity extends Activity {
     private BluetoothGatt mBluetoothGatt;
     private EditText mInputEditText;
     private Button mButton1;
+    private Button mAnimationChooseButton;
     private MyProgressDialog dialog;
     byte[] character_byte = new byte[BYTE_OF_ONE_WORD*140];
 
@@ -222,6 +227,7 @@ public class DeviceControlActivity extends Activity {
         // Sets up UI references.
         mInputEditText = (EditText)findViewById(R.id.input_edit);
         mButton1 = (Button)findViewById(R.id.btn1);
+        mAnimationChooseButton = (Button)findViewById(R.id.animation_choose_button);
         ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress);
         mGattServicesList = (ExpandableListView) findViewById(R.id.gatt_services_list);
         mGattServicesList.setOnChildClickListener(servicesListClickListner);
@@ -235,33 +241,43 @@ public class DeviceControlActivity extends Activity {
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         mButton1.setEnabled(false);
 
+
         mButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 word = mInputEditText.getText().toString();
                 if (word.equals(""))
                     word = getString(R.string.nothing_input);
-                Log.d("leungadd", "word=" + word +" word.length=" + word.length());
+                Log.d("leungadd", "word=" + word + " word.length=" + word.length());
                 GetDataFromHzk();
                 send_block_num = 0;
                 try {
                     BluetoothGattCharacteristic eraseFlashCharacteristic = mGattCharacteristics.get(2).get(2);//fff5
                     Log.d("leungadd", "try to erase flash");
-                    if(eraseFlashCharacteristic != null) {
+                    if (eraseFlashCharacteristic != null) {
                         eraseFlashCharacteristic.setValue(new byte[]{0x01});
                         mBluetoothLeService.writeCharacteristic(eraseFlashCharacteristic);
-                    }else {
+                    } else {
                         Toast.makeText(getApplicationContext(), getString(R.string.character_not_ready),
                                 Toast.LENGTH_SHORT).show();
                     }
                     bar.setMax(word.length() * BYTE_OF_ONE_WORD / MAX_LIMIT_ONE_TIME);
                     bar.setVisibility(View.VISIBLE);
-                }catch(IndexOutOfBoundsException e) {
+                } catch (IndexOutOfBoundsException e) {
                     Toast.makeText(getApplicationContext(), getString(R.string.character_not_ready),
                             Toast.LENGTH_SHORT).show();
                 }
             }
         });
+        mAnimationChooseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(DeviceControlActivity.this, AnimaChooseActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     void  sendSetting(int num){
@@ -617,4 +633,5 @@ public class DeviceControlActivity extends Activity {
         continueSendFilter.addAction(GATT_WRITE_SUCCESS);
         return continueSendFilter;
     }
+
 }
