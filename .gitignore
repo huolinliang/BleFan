@@ -1,3 +1,6 @@
 .gradle
 .idea
 Application/build/generated/source/r/debug
+Application/build/outputs
+Application/build/intermediates/
+build
