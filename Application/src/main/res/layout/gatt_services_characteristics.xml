@@ -109,30 +109,9 @@
             android:layout_marginTop="@dimen/margin_medium"
             android:layout_below="@+id/input_edit"
             android:layout_centerHorizontal="true" />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/animation_choose_button"
-            android:background="@drawable/ic_arrow_right"
-            android:layout_below="@+id/input_edit"
-            android:layout_alignParentRight="true"
-            />
     </RelativeLayout>
 
-    <!--
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="bottom">
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/animation_choose_button"
-            android:background="@drawable/send_button_disable"
-            android:layout_gravity="bottom"
-            />
-    </LinearLayout>
-    -->
+
 
 
 </LinearLayout>

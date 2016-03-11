@@ -44,6 +44,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SimpleExpandableListAdapter;
@@ -63,7 +64,7 @@ import java.util.List;
  * communicates with {@code BluetoothLeService}, which in turn interacts with the
  * Bluetooth LE API.
  */
-public class DeviceControlActivity extends Activity implements View.OnTouchListener,GestureDetector.OnGestureListener {
+public class DeviceControlActivity extends Activity {
     private final static String TAG = DeviceControlActivity.class.getSimpleName();
 
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
@@ -95,9 +96,7 @@ public class DeviceControlActivity extends Activity implements View.OnTouchListe
     private BluetoothGatt mBluetoothGatt;
     private EditText mInputEditText;
     private Button mButton1;
-    private Button mAnimationChooseButton;
     private MyProgressDialog dialog;
-    private GestureDetector detector;
     byte[] character_byte = new byte[BYTE_OF_ONE_WORD*140];
 
     byte[] character_type = new byte[140];
@@ -229,7 +228,6 @@ public class DeviceControlActivity extends Activity implements View.OnTouchListe
         // Sets up UI references.
         mInputEditText = (EditText)findViewById(R.id.input_edit);
         mButton1 = (Button)findViewById(R.id.btn1);
-        mAnimationChooseButton = (Button)findViewById(R.id.animation_choose_button);
         ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress);
         mGattServicesList = (ExpandableListView) findViewById(R.id.gatt_services_list);
         mGattServicesList.setOnChildClickListener(servicesListClickListner);
@@ -269,75 +267,8 @@ public class DeviceControlActivity extends Activity implements View.OnTouchListe
                 }
             }
         });
-        mAnimationChooseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setClass(DeviceControlActivity.this, AnimaChooseActivity.class);
-                startActivity(intent);
-            }
-        });
-        detector=new GestureDetector(this);
-        LinearLayout ll = (LinearLayout) findViewById(R.id.main_layout);
-        ll.setOnTouchListener(this);
-        ll.setLongClickable(true);
 
-    }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        Log.i("leungadd", "Activity onTouchEvent!");
-        return this.detector.onTouchEvent(event);
-    }
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        // TODO Auto-generated method stub
-        return detector.onTouchEvent(event);
-    }
-    @Override
-    public void onShowPress(MotionEvent e) {
-        // TODO Auto-generated method stub
-
-    }
-    @Override
-    public void onLongPress(MotionEvent e) {
-        // TODO Auto-generated method stub
-
-    }
-    @Override
-    public boolean onDown(MotionEvent e) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
-                            float distanceY) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-                           float velocityY) {
-        // TODO Auto-generated method stub
-        if(e1.getX() - e2.getX() > 120)
-        {
-            Intent upIntent = new Intent(DeviceControlActivity.this, AnimaChooseActivity.class);
-            upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(upIntent);
-            //Toast.makeText(this, "向左手势", Toast.LENGTH_SHORT).show();
-
-        }
-        else if (e2.getX()-e1.getX() >120) {
-            //切换Activity
-           // Toast.makeText(this, "向右手势", Toast.LENGTH_SHORT).show();
-        }
-
-        return false;
     }
 
     void  sendSetting(int num){
@@ -554,6 +485,7 @@ public class DeviceControlActivity extends Activity implements View.OnTouchListe
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d("leungadd", "onpause");
         unregisterReceiver(mGattUpdateReceiver);
         unregisterReceiver(mContinueSendReceiver);
     }
@@ -561,6 +493,7 @@ public class DeviceControlActivity extends Activity implements View.OnTouchListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d("leungadd", "ondestroy");
         unbindService(mServiceConnection);
         mBluetoothLeService = null;
     }
