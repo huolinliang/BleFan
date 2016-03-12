@@ -30,23 +30,30 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.app.NavUtils;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -88,7 +95,11 @@ public class DeviceControlActivity extends Activity {
     private final String LIST_UUID = "UUID";
     private final int MAX_LIMIT_ONE_TIME = 20;
     private final int BYTE_OF_ONE_WORD = 24;
-
+    ArrayList<View> mViewList = new ArrayList<View>();
+    LayoutInflater mLayoutInflater;
+    MyPagerAdapter mPagerAdapter;
+    LinearLayout mNumLayout;
+    Button mPreSelectedBt;
     byte words[] = null;
     String word_SBC = null;
     String word_uniq = null;
@@ -221,6 +232,54 @@ public class DeviceControlActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gatt_services_characteristics);
 
+        mLayoutInflater = getLayoutInflater();
+
+        //可以按照需求进行动态创建Layout,这里暂用静态的xml layout
+        mViewList.add(mLayoutInflater.inflate(R.layout.per_pager1, null));
+        mViewList.add(mLayoutInflater.inflate(R.layout.per_pager2, null));
+        mViewList.add(mLayoutInflater.inflate(R.layout.per_pager3, null));
+
+        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        mPagerAdapter = new MyPagerAdapter();
+        viewPager.setAdapter(mPagerAdapter);
+        mNumLayout = (LinearLayout) findViewById(R.id.ll_pager_num);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.dot_normal);
+        for (int i = 0; i < mViewList.size(); i++) {
+            Button bt = new Button(this);
+            bt.setLayoutParams(new ViewGroup.LayoutParams(bitmap.getWidth(), bitmap.getHeight()));
+            bt.setBackgroundResource(R.drawable.dot_normal);
+            mNumLayout.addView(bt);
+        }
+
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageSelected(int position) {
+
+                if(mPreSelectedBt != null){
+                    mPreSelectedBt.setBackgroundResource(R.drawable.dot_normal);
+                }
+
+                Button currentBt = (Button)mNumLayout.getChildAt(position);
+                currentBt.setBackgroundResource(R.drawable.dot_selected);
+                mPreSelectedBt = currentBt;
+
+                Log.d("leung", "current item:"+position);
+            }
+
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+                // TODO Auto-generated method stub
+
+            }
+        });
+
         final Intent intent = getIntent();
         mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
         mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
@@ -240,6 +299,7 @@ public class DeviceControlActivity extends Activity {
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         mButton1.setEnabled(false);
+
         mButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -267,6 +327,8 @@ public class DeviceControlActivity extends Activity {
                 }
             }
         });
+
+
 
 
     }
@@ -627,4 +689,29 @@ public class DeviceControlActivity extends Activity {
         return continueSendFilter;
     }
 
+    class MyPagerAdapter extends PagerAdapter {
+
+        @Override
+        public int getCount() {
+            return mViewList.size();
+        }
+
+        @Override
+        public Object instantiateItem(View container, int position) {
+            Log.i("INFO", "instantiate item:"+position);
+            ((ViewPager) container).addView(mViewList.get(position),0);
+            return mViewList.get(position);
+        }
+
+        @Override
+        public void destroyItem(View container, int position, Object object) {
+            Log.i("INFO", "destroy item:"+position);
+            ((ViewPager) container).removeView(mViewList.get(position));
+        }
+
+        @Override
+        public boolean isViewFromObject(View arg0, Object arg1) {
+            return arg0 == arg1;
+        }
+    }
 }
