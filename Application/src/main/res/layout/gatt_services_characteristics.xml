@@ -13,7 +13,9 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollView" android:layout_width="fill_parent"
+    android:layout_height="wrap_content" android:scrollbars="vertical">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/main_layout"
         android:orientation="vertical"
@@ -119,7 +121,7 @@
             android:id="@+id/pager"
             android:layout_width="wrap_content"
             android:layout_height="200dp"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="10dp"
             android:layout_centerHorizontal="true" />
         <LinearLayout
         android:id="@+id/ll_pager_num"
@@ -138,3 +140,4 @@
 
 
 </LinearLayout>
+</ScrollView>
