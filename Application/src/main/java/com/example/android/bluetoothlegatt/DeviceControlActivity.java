@@ -17,9 +17,6 @@
 package com.example.android.bluetoothlegatt;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.TaskStackBuilder;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
@@ -32,19 +29,17 @@ import android.content.ServiceConnection;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -53,7 +48,6 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,7 +73,10 @@ public class DeviceControlActivity extends Activity {
     public static final String GATT_WRITE_SUCCESS = "gatt.write.success";
     int send_block_num;
 
-
+    AnimationDrawable pagerAnimateDrawable;
+    ImageView pagerAnimateView;
+    private View view1,view2,view3,view4,view5,view6;//各个页卡
+    private boolean toSendAnimOnly = false;
     private TextView mConnectionState;
     private TextView mDataField;
     private String mDeviceName;
@@ -180,6 +177,11 @@ public class DeviceControlActivity extends Activity {
                 // Show all the supported services and characteristics on the user interface.
                 displayGattServices(mBluetoothLeService.getSupportedGattServices());
                 dialog.dismiss();
+                //auto start animation of the fan
+                pagerAnimateView = (ImageView)view1.findViewById(R.id.pager_imageview1);
+                pagerAnimateView.setBackgroundResource(R.drawable.scan_animate);
+                pagerAnimateDrawable = (AnimationDrawable) pagerAnimateView.getBackground();
+                pagerAnimateDrawable.start();
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
             }
@@ -230,14 +232,21 @@ public class DeviceControlActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.gatt_services_characteristics);
-
         mLayoutInflater = getLayoutInflater();
-
         //可以按照需求进行动态创建Layout,这里暂用静态的xml layout
-        mViewList.add(mLayoutInflater.inflate(R.layout.per_pager1, null));
-        mViewList.add(mLayoutInflater.inflate(R.layout.per_pager2, null));
-        mViewList.add(mLayoutInflater.inflate(R.layout.per_pager3, null));
+        view1 = mLayoutInflater.inflate(R.layout.viewpager_1, null);
+        view2 = mLayoutInflater.inflate(R.layout.viewpager_2, null);
+        view3 = mLayoutInflater.inflate(R.layout.viewpager_3, null);
+        view4 = mLayoutInflater.inflate(R.layout.viewpager_4, null);
+        view5 = mLayoutInflater.inflate(R.layout.viewpager_5, null);
+        view6 = mLayoutInflater.inflate(R.layout.viewpager_6, null);
+        mViewList.add(view1);
+        mViewList.add(view2);
+        mViewList.add(view3);
+        mViewList.add(view4);
+        mViewList.add(view5);
+        mViewList.add(view6);
+        setContentView(R.layout.gatt_services_characteristics);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new MyPagerAdapter();
@@ -263,7 +272,102 @@ public class DeviceControlActivity extends Activity {
                 Button currentBt = (Button)mNumLayout.getChildAt(position);
                 currentBt.setBackgroundResource(R.drawable.dot_selected);
                 mPreSelectedBt = currentBt;
-
+                if(position == 0) {
+                    pagerAnimateView = (ImageView)view1.findViewById(R.id.pager_imageview1);
+                    pagerAnimateView.setBackgroundResource(R.drawable.scan_animate);
+                    pagerAnimateDrawable = (AnimationDrawable) pagerAnimateView.getBackground();
+                    pagerAnimateDrawable.start();
+                    try {
+                        BluetoothGattCharacteristic sendCharacteristic =mGattCharacteristics.get(2).get(0); //fff3
+                        if(sendCharacteristic != null){
+                            sendCharacteristic.setValue(new byte[]{0x01});
+                            mBluetoothLeService.writeCharacteristic(sendCharacteristic);
+                            toSendAnimOnly = true;
+                        }
+                    }catch (NullPointerException e) {
+                        //
+                    }
+                }
+                if(position == 1) {
+                    pagerAnimateView = (ImageView)view2.findViewById(R.id.pager_imageview2);
+                    pagerAnimateView.setBackgroundResource(R.drawable.scan_animate);
+                    pagerAnimateDrawable = (AnimationDrawable) pagerAnimateView.getBackground();
+                    pagerAnimateDrawable.start();
+                    try {
+                        BluetoothGattCharacteristic sendCharacteristic =mGattCharacteristics.get(2).get(0); //fff3
+                        if(sendCharacteristic != null){
+                            sendCharacteristic.setValue(new byte[]{0x02});
+                            mBluetoothLeService.writeCharacteristic(sendCharacteristic);
+                            toSendAnimOnly = true;
+                        }
+                    }catch (NullPointerException e) {
+                        //
+                    }
+                }
+                if(position == 2) {
+                    pagerAnimateView = (ImageView)view3.findViewById(R.id.pager_imageview3);
+                    pagerAnimateView.setBackgroundResource(R.drawable.scan_animate);
+                    pagerAnimateDrawable = (AnimationDrawable) pagerAnimateView.getBackground();
+                    pagerAnimateDrawable.start();
+                    try {
+                        BluetoothGattCharacteristic sendCharacteristic =mGattCharacteristics.get(2).get(0); //fff3
+                        if(sendCharacteristic != null){
+                            sendCharacteristic.setValue(new byte[]{0x03});
+                            mBluetoothLeService.writeCharacteristic(sendCharacteristic);
+                            toSendAnimOnly = true;
+                        }
+                    }catch (NullPointerException e) {
+                        //
+                    }
+                }
+                if(position == 3) {
+                    pagerAnimateView = (ImageView)view4.findViewById(R.id.pager_imageview4);
+                    pagerAnimateView.setBackgroundResource(R.drawable.loading_animate);
+                    pagerAnimateDrawable = (AnimationDrawable) pagerAnimateView.getBackground();
+                    pagerAnimateDrawable.start();
+                    try {
+                        BluetoothGattCharacteristic sendCharacteristic =mGattCharacteristics.get(2).get(0); //fff3
+                        if(sendCharacteristic != null){
+                            sendCharacteristic.setValue(new byte[]{0x04});
+                            mBluetoothLeService.writeCharacteristic(sendCharacteristic);
+                            toSendAnimOnly = true;
+                        }
+                    }catch (NullPointerException e) {
+                        //
+                    }
+                }
+                if(position == 4) {
+                    pagerAnimateView = (ImageView)view5.findViewById(R.id.pager_imageview5);
+                    pagerAnimateView.setBackgroundResource(R.drawable.scan_animate);
+                    pagerAnimateDrawable = (AnimationDrawable) pagerAnimateView.getBackground();
+                    pagerAnimateDrawable.start();
+                    try {
+                        BluetoothGattCharacteristic sendCharacteristic =mGattCharacteristics.get(2).get(0); //fff3
+                        if(sendCharacteristic != null){
+                            sendCharacteristic.setValue(new byte[]{0x05});
+                            mBluetoothLeService.writeCharacteristic(sendCharacteristic);
+                            toSendAnimOnly = true;
+                        }
+                    }catch (NullPointerException e) {
+                        //
+                    }
+                }
+                if(position == 5) {
+                    pagerAnimateView = (ImageView)view6.findViewById(R.id.pager_imageview6);
+                    pagerAnimateView.setBackgroundResource(R.drawable.loading_animate);
+                    pagerAnimateDrawable = (AnimationDrawable) pagerAnimateView.getBackground();
+                    pagerAnimateDrawable.start();
+                    try {
+                        BluetoothGattCharacteristic sendCharacteristic =mGattCharacteristics.get(2).get(0); //fff3
+                        if(sendCharacteristic != null){
+                            sendCharacteristic.setValue(new byte[]{0x06});
+                            mBluetoothLeService.writeCharacteristic(sendCharacteristic);
+                            toSendAnimOnly = true;
+                        }
+                    }catch (NullPointerException e) {
+                        //
+                    }
+                }
                 Log.d("leung", "current item:"+position);
             }
 
@@ -304,11 +408,13 @@ public class DeviceControlActivity extends Activity {
             @Override
             public void onClick(View v) {
                 word = mInputEditText.getText().toString();
+
                 if (word.equals(""))
                     word = getString(R.string.nothing_input);
                 Log.d("leungadd", "word=" + word + " word.length=" + word.length());
                 GetDataFromHzk();
                 send_block_num = 0;
+                toSendAnimOnly = false;
                 try {
                     BluetoothGattCharacteristic eraseFlashCharacteristic = mGattCharacteristics.get(2).get(2);//fff5
                     Log.d("leungadd", "try to erase flash");
@@ -331,9 +437,11 @@ public class DeviceControlActivity extends Activity {
 
 
 
+
     }
 
     void  sendSetting(int num){
+
             BluetoothGattCharacteristic sendCharacteristic =mGattCharacteristics.get(2).get(1); //fff4
             int num_max = word.length() * BYTE_OF_ONE_WORD / MAX_LIMIT_ONE_TIME;
             int character_type_send_max;
@@ -431,10 +539,9 @@ public class DeviceControlActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             Log.d("leungadd", "in broadcastreceive, num now is " + send_block_num);
             String action = intent.getAction();
-            if (action.equals(GATT_WRITE_SUCCESS)) {
+            if (action.equals(GATT_WRITE_SUCCESS) && !toSendAnimOnly) {
                 sendSetting(send_block_num++);
             }
-
         }
     };
 

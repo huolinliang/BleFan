@@ -18,10 +18,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <ImageView
-        android:id="@+id/pager_imageview"
+        android:id="@+id/pager_imageview5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/send_button_pressed"/>
+        android:background="@drawable/loading_animate"/>
 
 </RelativeLayout>
