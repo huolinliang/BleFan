@@ -119,6 +119,7 @@
 
     <RelativeLayout android:orientation="vertical"
         android:layout_below="@+id/rl_input_send_part"
+        android:layout_marginTop="@dimen/margin_medium"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
         <ImageButton

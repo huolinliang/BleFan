@@ -76,7 +76,7 @@ public class DeviceControlActivity extends Activity {
 
     AnimationDrawable pagerAnimateDrawable;
     ImageView pagerAnimateView;
-    private View view1,view2,view3,view4,view5,view6;//各个页卡
+    private View view0,view1,view2,view3,view4,view5,view6,view7;//各个页卡
     private ImageButton mRight_button;
     private ImageButton mLeft_button;
     private boolean toSendAnimOnly = false;
@@ -171,6 +171,9 @@ public class DeviceControlActivity extends Activity {
                 progressbar_status = 0;
                 mHandler.sendEmptyMessage(0x111);
                 dialog.dismiss();
+                if(pagerAnimateDrawable != null) {
+                    pagerAnimateDrawable.stop();
+                }
                 mButton1.setEnabled(false);
                 mButton1.setBackgroundResource(R.drawable.send_button_disable);
             }else if(BluetoothLeService.ACTION_GATT_CONNECTING.equals(action)) {
@@ -242,12 +245,14 @@ public class DeviceControlActivity extends Activity {
         view4 = mLayoutInflater.inflate(R.layout.viewpager_4, null);
         view5 = mLayoutInflater.inflate(R.layout.viewpager_5, null);
         view6 = mLayoutInflater.inflate(R.layout.viewpager_6, null);
+        view7 = mLayoutInflater.inflate(R.layout.viewpager_turnback, null);
         mViewList.add(view1);
         mViewList.add(view2);
         mViewList.add(view3);
         mViewList.add(view4);
         mViewList.add(view5);
         mViewList.add(view6);
+        mViewList.add(view7);
         setContentView(R.layout.gatt_services_characteristics);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
@@ -255,7 +260,7 @@ public class DeviceControlActivity extends Activity {
         viewPager.setAdapter(mPagerAdapter);
         mNumLayout = (LinearLayout) findViewById(R.id.ll_pager_num);
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.dot_normal);
-        for (int i = 0; i < mViewList.size(); i++) {
+        for (int i = 0; i < mViewList.size() - 1; i++) {
             Button bt = new Button(this);
             bt.setLayoutParams(new ViewGroup.LayoutParams(bitmap.getWidth(), bitmap.getHeight()));
             bt.setBackgroundResource(R.drawable.dot_normal);
@@ -266,11 +271,15 @@ public class DeviceControlActivity extends Activity {
 
             @Override
             public void onPageSelected(int position) {
-
+                //++for 循环滚动
+                if(position == mViewList.size() - 1){
+                    viewPager.setCurrentItem(0, false);
+                    position = 0;
+                }
+                //++
                 if(mPreSelectedBt != null){
                     mPreSelectedBt.setBackgroundResource(R.drawable.dot_normal);
                 }
-
                 Button currentBt = (Button)mNumLayout.getChildAt(position);
                 currentBt.setBackgroundResource(R.drawable.dot_selected);
                 mPreSelectedBt = currentBt;
@@ -409,10 +418,10 @@ public class DeviceControlActivity extends Activity {
         mRight_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(viewPager.getCurrentItem() == mViewList.size() - 1)
+                if(viewPager.getCurrentItem() == mViewList.size() - 2)
                     viewPager.setCurrentItem(0);
                 else
-                    viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+                    viewPager.setCurrentItem(viewPager.getCurrentItem() + 1, false);
             }
         });
         mLeft_button = (ImageButton)findViewById(R.id.left_btn);
@@ -420,9 +429,9 @@ public class DeviceControlActivity extends Activity {
             @Override
             public void onClick(View view) {
                 if(viewPager.getCurrentItem() == 0)
-                    viewPager.setCurrentItem(mViewList.size() - 1);
+                    viewPager.setCurrentItem(mViewList.size() - 2);
                 else
-                    viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+                    viewPager.setCurrentItem(viewPager.getCurrentItem() - 1, false);
             }
         });
 
@@ -455,10 +464,6 @@ public class DeviceControlActivity extends Activity {
                 }
             }
         });
-
-
-
-
 
     }
 
@@ -547,8 +552,6 @@ public class DeviceControlActivity extends Activity {
                     }
 
                 }
-
-
             }else {
                 Toast.makeText(getApplicationContext(), getString(R.string.character_not_ready),
                         Toast.LENGTH_SHORT).show();
