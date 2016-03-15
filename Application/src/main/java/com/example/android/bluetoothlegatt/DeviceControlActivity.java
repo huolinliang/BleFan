@@ -45,6 +45,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -76,6 +77,8 @@ public class DeviceControlActivity extends Activity {
     AnimationDrawable pagerAnimateDrawable;
     ImageView pagerAnimateView;
     private View view1,view2,view3,view4,view5,view6;//各个页卡
+    private ImageButton mRight_button;
+    private ImageButton mLeft_button;
     private boolean toSendAnimOnly = false;
     private TextView mConnectionState;
     private TextView mDataField;
@@ -179,7 +182,6 @@ public class DeviceControlActivity extends Activity {
                 dialog.dismiss();
                 //auto start animation of the fan
                 pagerAnimateView = (ImageView)view1.findViewById(R.id.pager_imageview1);
-                pagerAnimateView.setBackgroundResource(R.drawable.scan_animate);
                 pagerAnimateDrawable = (AnimationDrawable) pagerAnimateView.getBackground();
                 pagerAnimateDrawable.start();
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
@@ -248,7 +250,7 @@ public class DeviceControlActivity extends Activity {
         mViewList.add(view6);
         setContentView(R.layout.gatt_services_characteristics);
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new MyPagerAdapter();
         viewPager.setAdapter(mPagerAdapter);
         mNumLayout = (LinearLayout) findViewById(R.id.ll_pager_num);
@@ -274,7 +276,7 @@ public class DeviceControlActivity extends Activity {
                 mPreSelectedBt = currentBt;
                 if(position == 0) {
                     pagerAnimateView = (ImageView)view1.findViewById(R.id.pager_imageview1);
-                    pagerAnimateView.setBackgroundResource(R.drawable.scan_animate);
+                    pagerAnimateView.setBackgroundResource(R.drawable.fan_animate_style_1);
                     pagerAnimateDrawable = (AnimationDrawable) pagerAnimateView.getBackground();
                     pagerAnimateDrawable.start();
                     try {
@@ -284,13 +286,13 @@ public class DeviceControlActivity extends Activity {
                             mBluetoothLeService.writeCharacteristic(sendCharacteristic);
                             toSendAnimOnly = true;
                         }
-                    }catch (NullPointerException e) {
+                    }catch (NullPointerException | IndexOutOfBoundsException e) {
                         //
                     }
                 }
                 if(position == 1) {
                     pagerAnimateView = (ImageView)view2.findViewById(R.id.pager_imageview2);
-                    pagerAnimateView.setBackgroundResource(R.drawable.scan_animate);
+
                     pagerAnimateDrawable = (AnimationDrawable) pagerAnimateView.getBackground();
                     pagerAnimateDrawable.start();
                     try {
@@ -300,7 +302,7 @@ public class DeviceControlActivity extends Activity {
                             mBluetoothLeService.writeCharacteristic(sendCharacteristic);
                             toSendAnimOnly = true;
                         }
-                    }catch (NullPointerException e) {
+                    }catch (NullPointerException | IndexOutOfBoundsException e) {
                         //
                     }
                 }
@@ -316,7 +318,7 @@ public class DeviceControlActivity extends Activity {
                             mBluetoothLeService.writeCharacteristic(sendCharacteristic);
                             toSendAnimOnly = true;
                         }
-                    }catch (NullPointerException e) {
+                    }catch (NullPointerException | IndexOutOfBoundsException e) {
                         //
                     }
                 }
@@ -332,7 +334,7 @@ public class DeviceControlActivity extends Activity {
                             mBluetoothLeService.writeCharacteristic(sendCharacteristic);
                             toSendAnimOnly = true;
                         }
-                    }catch (NullPointerException e) {
+                    }catch (NullPointerException | IndexOutOfBoundsException e) {
                         //
                     }
                 }
@@ -348,7 +350,7 @@ public class DeviceControlActivity extends Activity {
                             mBluetoothLeService.writeCharacteristic(sendCharacteristic);
                             toSendAnimOnly = true;
                         }
-                    }catch (NullPointerException e) {
+                    }catch (NullPointerException | IndexOutOfBoundsException e) {
                         //
                     }
                 }
@@ -364,7 +366,7 @@ public class DeviceControlActivity extends Activity {
                             mBluetoothLeService.writeCharacteristic(sendCharacteristic);
                             toSendAnimOnly = true;
                         }
-                    }catch (NullPointerException e) {
+                    }catch (NullPointerException | IndexOutOfBoundsException e) {
                         //
                     }
                 }
@@ -403,6 +405,26 @@ public class DeviceControlActivity extends Activity {
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         mButton1.setEnabled(false);
+        mRight_button = (ImageButton)findViewById(R.id.right_btn);
+        mRight_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(viewPager.getCurrentItem() == mViewList.size() - 1)
+                    viewPager.setCurrentItem(0);
+                else
+                    viewPager.setCurrentItem(viewPager.getCurrentItem() + 1);
+            }
+        });
+        mLeft_button = (ImageButton)findViewById(R.id.left_btn);
+        mLeft_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(viewPager.getCurrentItem() == 0)
+                    viewPager.setCurrentItem(mViewList.size() - 1);
+                else
+                    viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+            }
+        });
 
         mButton1.setOnClickListener(new View.OnClickListener() {
             @Override
