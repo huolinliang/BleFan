@@ -187,7 +187,7 @@ public class DeviceControlActivity extends Activity {
                 displayGattServices(mBluetoothLeService.getSupportedGattServices());
                 dialog.dismiss();
                 //auto start animation of the fan
-                pagerAnimateView = (ImageView)view1.findViewById(R.id.pager_imageview1);
+                pagerAnimateView = (ImageView)view1.findViewById(R.id.pager_imageview);
                 pagerAnimateDrawable = (AnimationDrawable) pagerAnimateView.getBackground();
                 pagerAnimateDrawable.start();
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
