@@ -77,6 +77,11 @@ public class DeviceControlActivity extends Activity {
     AnimationDrawable pagerAnimateDrawable;
     ImageView pagerAnimateView;
     private View view0,view1,view2,view3,view4,view5,view6,view7;//各个页卡
+    ArrayList<View> mViewList = new ArrayList<View>();
+    LayoutInflater mLayoutInflater;
+    MyPagerAdapter mPagerAdapter;
+    LinearLayout mNumLayout;
+    Button mPreSelectedBt;
     private ImageButton mRight_button;
     private ImageButton mLeft_button;
     private boolean toSendAnimOnly = false;
@@ -95,11 +100,8 @@ public class DeviceControlActivity extends Activity {
     private final String LIST_UUID = "UUID";
     private final int MAX_LIMIT_ONE_TIME = 20;
     private final int BYTE_OF_ONE_WORD = 24;
-    ArrayList<View> mViewList = new ArrayList<View>();
-    LayoutInflater mLayoutInflater;
-    MyPagerAdapter mPagerAdapter;
-    LinearLayout mNumLayout;
-    Button mPreSelectedBt;
+
+
     byte words[] = null;
     String word_SBC = null;
     String word_uniq = null;
@@ -111,6 +113,7 @@ public class DeviceControlActivity extends Activity {
     byte[] character_byte = new byte[BYTE_OF_ONE_WORD*140];
 
     byte[] character_type = new byte[140];
+    byte[] animate_type = new byte[] {0x01,0x02,0x03,0x04,0x05,0x06};
     int progressbar_status = 0;
     ProgressBar bar;
     Handler mHandler = new Handler()
@@ -283,102 +286,20 @@ public class DeviceControlActivity extends Activity {
                 Button currentBt = (Button)mNumLayout.getChildAt(position);
                 currentBt.setBackgroundResource(R.drawable.dot_selected);
                 mPreSelectedBt = currentBt;
-                if(position == 0) {
-                    pagerAnimateView = (ImageView)view1.findViewById(R.id.pager_imageview1);
-                    pagerAnimateView.setBackgroundResource(R.drawable.fan_animate_style_1);
-                    pagerAnimateDrawable = (AnimationDrawable) pagerAnimateView.getBackground();
-                    pagerAnimateDrawable.start();
-                    try {
-                        BluetoothGattCharacteristic sendCharacteristic =mGattCharacteristics.get(2).get(0); //fff3
-                        if(sendCharacteristic != null){
-                            sendCharacteristic.setValue(new byte[]{0x01});
-                            mBluetoothLeService.writeCharacteristic(sendCharacteristic);
-                            toSendAnimOnly = true;
-                        }
-                    }catch (NullPointerException | IndexOutOfBoundsException e) {
-                        //
+                pagerAnimateView = (ImageView)mViewList.get(position).findViewById(R.id.pager_imageview);
+                pagerAnimateDrawable = (AnimationDrawable) pagerAnimateView.getBackground();
+                pagerAnimateDrawable.start();
+                try {
+                    BluetoothGattCharacteristic sendCharacteristic =mGattCharacteristics.get(2).get(0); //fff3
+                    if(sendCharacteristic != null){
+                        sendCharacteristic.setValue(new byte[]{animate_type[position]});
+                        mBluetoothLeService.writeCharacteristic(sendCharacteristic);
+                        toSendAnimOnly = true;
                     }
+                }catch (NullPointerException | IndexOutOfBoundsException e) {
+                    //
                 }
-                if(position == 1) {
-                    pagerAnimateView = (ImageView)view2.findViewById(R.id.pager_imageview2);
 
-                    pagerAnimateDrawable = (AnimationDrawable) pagerAnimateView.getBackground();
-                    pagerAnimateDrawable.start();
-                    try {
-                        BluetoothGattCharacteristic sendCharacteristic =mGattCharacteristics.get(2).get(0); //fff3
-                        if(sendCharacteristic != null){
-                            sendCharacteristic.setValue(new byte[]{0x02});
-                            mBluetoothLeService.writeCharacteristic(sendCharacteristic);
-                            toSendAnimOnly = true;
-                        }
-                    }catch (NullPointerException | IndexOutOfBoundsException e) {
-                        //
-                    }
-                }
-                if(position == 2) {
-                    pagerAnimateView = (ImageView)view3.findViewById(R.id.pager_imageview3);
-                    pagerAnimateView.setBackgroundResource(R.drawable.scan_animate);
-                    pagerAnimateDrawable = (AnimationDrawable) pagerAnimateView.getBackground();
-                    pagerAnimateDrawable.start();
-                    try {
-                        BluetoothGattCharacteristic sendCharacteristic =mGattCharacteristics.get(2).get(0); //fff3
-                        if(sendCharacteristic != null){
-                            sendCharacteristic.setValue(new byte[]{0x03});
-                            mBluetoothLeService.writeCharacteristic(sendCharacteristic);
-                            toSendAnimOnly = true;
-                        }
-                    }catch (NullPointerException | IndexOutOfBoundsException e) {
-                        //
-                    }
-                }
-                if(position == 3) {
-                    pagerAnimateView = (ImageView)view4.findViewById(R.id.pager_imageview4);
-                    pagerAnimateView.setBackgroundResource(R.drawable.loading_animate);
-                    pagerAnimateDrawable = (AnimationDrawable) pagerAnimateView.getBackground();
-                    pagerAnimateDrawable.start();
-                    try {
-                        BluetoothGattCharacteristic sendCharacteristic =mGattCharacteristics.get(2).get(0); //fff3
-                        if(sendCharacteristic != null){
-                            sendCharacteristic.setValue(new byte[]{0x04});
-                            mBluetoothLeService.writeCharacteristic(sendCharacteristic);
-                            toSendAnimOnly = true;
-                        }
-                    }catch (NullPointerException | IndexOutOfBoundsException e) {
-                        //
-                    }
-                }
-                if(position == 4) {
-                    pagerAnimateView = (ImageView)view5.findViewById(R.id.pager_imageview5);
-                    pagerAnimateView.setBackgroundResource(R.drawable.scan_animate);
-                    pagerAnimateDrawable = (AnimationDrawable) pagerAnimateView.getBackground();
-                    pagerAnimateDrawable.start();
-                    try {
-                        BluetoothGattCharacteristic sendCharacteristic =mGattCharacteristics.get(2).get(0); //fff3
-                        if(sendCharacteristic != null){
-                            sendCharacteristic.setValue(new byte[]{0x05});
-                            mBluetoothLeService.writeCharacteristic(sendCharacteristic);
-                            toSendAnimOnly = true;
-                        }
-                    }catch (NullPointerException | IndexOutOfBoundsException e) {
-                        //
-                    }
-                }
-                if(position == 5) {
-                    pagerAnimateView = (ImageView)view6.findViewById(R.id.pager_imageview6);
-                    pagerAnimateView.setBackgroundResource(R.drawable.loading_animate);
-                    pagerAnimateDrawable = (AnimationDrawable) pagerAnimateView.getBackground();
-                    pagerAnimateDrawable.start();
-                    try {
-                        BluetoothGattCharacteristic sendCharacteristic =mGattCharacteristics.get(2).get(0); //fff3
-                        if(sendCharacteristic != null){
-                            sendCharacteristic.setValue(new byte[]{0x06});
-                            mBluetoothLeService.writeCharacteristic(sendCharacteristic);
-                            toSendAnimOnly = true;
-                        }
-                    }catch (NullPointerException | IndexOutOfBoundsException e) {
-                        //
-                    }
-                }
                 Log.d("leung", "current item:"+position);
             }
 
