@@ -95,13 +95,10 @@ public class DeviceControlActivity extends Activity {
             new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
     private boolean mConnected = false;
     private BluetoothGattCharacteristic mNotifyCharacteristic;
-
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
     private final int MAX_LIMIT_ONE_TIME = 20;
     private final int BYTE_OF_ONE_WORD = 24;
-
-
     byte words[] = null;
     String word_SBC = null;
     String word_uniq = null;
@@ -111,7 +108,6 @@ public class DeviceControlActivity extends Activity {
     private Button mButton1;
     private MyProgressDialog dialog;
     byte[] character_byte = new byte[BYTE_OF_ONE_WORD*140];
-
     byte[] character_type = new byte[140];
     byte[] animate_type = new byte[] {0x01,0x02,0x03,0x04,0x05,0x06};
     int progressbar_status = 0;
@@ -161,7 +157,7 @@ public class DeviceControlActivity extends Activity {
             if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
                 mConnected = true;
                 updateConnectionState(R.string.connected);
-                Log.d("leungadd", "receive connected broadcast");
+                Log.d(TAG, "receive connected broadcast");
                 invalidateOptionsMenu();
                 mButton1.setEnabled(true);
                 mButton1.setBackgroundResource(R.drawable.button_selector);
@@ -180,7 +176,7 @@ public class DeviceControlActivity extends Activity {
                 mButton1.setEnabled(false);
                 mButton1.setBackgroundResource(R.drawable.send_button_disable);
             }else if(BluetoothLeService.ACTION_GATT_CONNECTING.equals(action)) {
-                Log.d("leungadd", "receive connecting broadcast");
+                Log.d(TAG, "receive connecting broadcast");
                 showMyDialog(getWindow().getDecorView());
             } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
                 // Show all the supported services and characteristics on the user interface.
@@ -219,7 +215,7 @@ public class DeviceControlActivity extends Activity {
                                 mNotifyCharacteristic = null;
                             }
                             mBluetoothLeService.readCharacteristic(characteristic);
-                            Log.d("leungadd", "onchildclick 1 groupPosition=" + groupPosition + "childPosition=" + childPosition);
+                            Log.d(TAG, "onchildclick 1 groupPosition=" + groupPosition + "childPosition=" + childPosition);
                         }
                         if ((charaProp | BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
                             mNotifyCharacteristic = characteristic;
@@ -300,7 +296,7 @@ public class DeviceControlActivity extends Activity {
                     //
                 }
 
-                Log.d("leung", "current item:"+position);
+                Log.d(TAG, "current item:"+position);
             }
 
             @Override
@@ -363,13 +359,13 @@ public class DeviceControlActivity extends Activity {
 
                 if (word.equals(""))
                     word = getString(R.string.nothing_input);
-                Log.d("leungadd", "word=" + word + " word.length=" + word.length());
+                Log.d(TAG, "word=" + word + " word.length=" + word.length());
                 GetDataFromHzk();
                 send_block_num = 0;
                 toSendAnimOnly = false;
                 try {
                     BluetoothGattCharacteristic eraseFlashCharacteristic = mGattCharacteristics.get(2).get(2);//fff5
-                    Log.d("leungadd", "try to erase flash");
+                    Log.d(TAG, "try to erase flash");
                     if (eraseFlashCharacteristic != null) {
                         eraseFlashCharacteristic.setValue(new byte[]{0x01});
                         mBluetoothLeService.writeCharacteristic(eraseFlashCharacteristic);
@@ -400,26 +396,17 @@ public class DeviceControlActivity extends Activity {
                 character_type_send_max = word.length() / MAX_LIMIT_ONE_TIME + 1;
 
             if(sendCharacteristic != null){
-                Log.d("leungadd", "in sendSetting num now = "+num);
+                Log.d(TAG, "in sendSetting num now = "+num);
                 if(num < num_max) {
                     for(int i = 0; i < MAX_LIMIT_ONE_TIME; i++)
                         tmp_character_byte[i] = character_byte[num * MAX_LIMIT_ONE_TIME + i];
                     sendCharacteristic.setValue(tmp_character_byte);
-                   /* sendCharacteristic.setValue(new byte[]{
-                            character_byte[num * 20 + 0], character_byte[num * 20 + 1], character_byte[num * 20 + 2],
-                            character_byte[num * 20 + 3], character_byte[num * 20 + 4], character_byte[num * 20 + 5],
-                            character_byte[num * 20 + 6], character_byte[num * 20 + 7], character_byte[num * 20 + 8],
-                            character_byte[num * 20 + 9], character_byte[num * 20 + 10], character_byte[num * 20 + 11],
-                            character_byte[num * 20 + 12], character_byte[num * 20 + 13], character_byte[num * 20 + 14],
-                            character_byte[num * 20 + 15], character_byte[num * 20 + 16], character_byte[num * 20 + 17],
-                            character_byte[num * 20 + 18], character_byte[num * 20 + 19]
-                    });*/
                             mBluetoothLeService.writeCharacteristic(sendCharacteristic);
                             progressbar_status = num;
                             mHandler.sendEmptyMessage(0x111);
                 }
                 if(num == num_max) {
-                    Log.d("leungadd", "num = num_max = " + num_max);
+                    Log.d(TAG, "num = num_max = " + num_max);
                     int left_bytes_num = word.length()*24 - num_max*MAX_LIMIT_ONE_TIME;
                     if(left_bytes_num > 0) {
                         byte[] left_character_byte = new byte[left_bytes_num];
@@ -429,7 +416,6 @@ public class DeviceControlActivity extends Activity {
                         sendCharacteristic.setValue(left_character_byte);
                         mBluetoothLeService.writeCharacteristic(sendCharacteristic);
                     }else {
-                        //sendSetting(num_max + 1);
                         sendSetting(send_block_num++);
                     }
 
@@ -437,7 +423,7 @@ public class DeviceControlActivity extends Activity {
                 //发送字符是否为中文的数组序列，该数组的元素由0x01 和 0x00组成，0x1表示该字符为中文
                 //规定最大输入140个字符，每次最多发送20个字节，因此该数组最多需要发送7次
                 if(num >= num_max + 1 && num <= num_max + character_type_send_max) {
-                    Log.d("leungadd", "character_type_send_max=" + character_type_send_max);
+                    Log.d(TAG, "character_type_send_max=" + character_type_send_max);
                     byte[] tmp_character_type = new byte[MAX_LIMIT_ONE_TIME];
                     BluetoothGattCharacteristic isChineseCharacteristic = mGattCharacteristics.get(2).get(4);//fff7,字符类型是否为中文
                     if(isChineseCharacteristic != null) {
@@ -456,7 +442,7 @@ public class DeviceControlActivity extends Activity {
                 }
                 //发送更新标识到ble，使其自动刷新
                 if(num == num_max + character_type_send_max + 1) {
-                    Log.d("leungadd", "num = max +1 = " + num);
+                    Log.d(TAG, "num = max +1 = " + num);
                     BluetoothGattCharacteristic renewCharacteristic = mGattCharacteristics.get(2).get(3);//fff6
                     if(renewCharacteristic != null) {
                         renewCharacteristic.setValue(new byte[]{(byte)word.length()});//把字符长度发送给ble设备
@@ -483,7 +469,7 @@ public class DeviceControlActivity extends Activity {
 
     BroadcastReceiver mContinueSendReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
-            Log.d("leungadd", "in broadcastreceive, num now is " + send_block_num);
+            Log.d(TAG, "in broadcastreceive, num now is " + send_block_num);
             String action = intent.getAction();
             if (action.equals(GATT_WRITE_SUCCESS) && !toSendAnimOnly) {
                 sendSetting(send_block_num++);
@@ -503,7 +489,7 @@ public class DeviceControlActivity extends Activity {
     public void GetDataFromHzk() {
         for (int charIndex = 0; charIndex < word.length(); charIndex++) {
             word_uniq = word.substring(charIndex, charIndex + 1);
-            character_type[charIndex] = isChinese(word_uniq);//tmp20160225
+            character_type[charIndex] = isChinese(word_uniq);
             word_SBC = ToSBC(word_uniq);
 
             try {
@@ -546,7 +532,6 @@ public class DeviceControlActivity extends Activity {
                     for (j = 0; j < 2; j++) {
                         for (i = 0; i < 8; i++) {
                             flag = bytes[k * 2 + j] & 0xff & key[i];
-                            //System.out.printf("%d ", flag);
                             if (flag == 0) {
                                 pointflag = false;
                             } else {
@@ -562,10 +547,6 @@ public class DeviceControlActivity extends Activity {
                 e.printStackTrace();
             }
         }
-        /*测试代码，用于测试字符是否为汉字，打印为0则不是，1则是
-        for (int charIndex = 0; charIndex < word.length(); charIndex++) {
-            Log.d("leungadd2", "index:" +charIndex + "=" +character_type[charIndex]);
-        }*/
     }
 
     /*
@@ -588,7 +569,7 @@ public class DeviceControlActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("leungadd", "onresume");
+        Log.d(TAG, "onresume");
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
         registerReceiver(mContinueSendReceiver, makeContinuesIntentFilter());
         if (mBluetoothLeService != null) {
@@ -600,7 +581,7 @@ public class DeviceControlActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("leungadd", "onpause");
+        Log.d(TAG, "onpause");
         unregisterReceiver(mGattUpdateReceiver);
         unregisterReceiver(mContinueSendReceiver);
     }
@@ -608,7 +589,7 @@ public class DeviceControlActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("leungadd", "ondestroy");
+        Log.d(TAG, "ondestroy");
         unbindService(mServiceConnection);
         mBluetoothLeService = null;
     }
